@@ -1,4 +1,4 @@
-type Vector = number & IVector & any;
+type Vector = number & IVector;
 
 declare interface IVector {
     x: number;
