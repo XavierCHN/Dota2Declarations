@@ -100,15 +100,15 @@ declare function CreateIllusions(hOwner: CDOTA_BaseNPC, hHeroToCopy: CDOTA_BaseN
 /**
  * Create a DOTA item
  */
-declare function CreateItem(itemName: string, owner: CDOTAPlayer, purchaser: CDOTAPlayer): CDOTA_Item;
+declare function CreateItem(itemName: string, owner: CDOTAPlayer | undefined, purchaser: CDOTAPlayer | undefined): CDOTA_Item;
 /**
  * Create a physical item at a given location, can start in air (but doesn't clear a space)
  */
-declare function CreateItemOnPositionForLaunch(location: Vector, item: CDOTA_Item): CDOTA_Item;
+declare function CreateItemOnPositionForLaunch(location: Vector, item: CDOTA_Item): CDOTA_Item_Physical;
 /**
  * Create a physical item at a given location
  */
-declare function CreateItemOnPositionSync(location: Vector, item: CDOTA_Item): CDOTA_Item;
+declare function CreateItemOnPositionSync(location: Vector, item: CDOTA_Item): CDOTA_Item_Physical;
 /**
  * Create a modifier not associated with an NPC. ( hCaster, hAbility, modifierName, paramTable, vOrigin, nTeamNumber, bPhantomBlocker )
  */
@@ -132,7 +132,7 @@ declare function CreateTriggerRadiusApproximate(arg1: Vector, arg2: number): CBa
 /**
  * Creates a DOTA unit by its dota_npc_units.txt name
  */
-declare function CreateUnitByName(unit_name: string, location: Vector, find_clear_space: boolean, npc_owner: CBaseEntity | null | undefined, unit_owner: CDOTAPlayer | null | undefined,
+declare function CreateUnitByName(unit_name: string, location: Vector, find_clear_space: boolean, npc_owner: CBaseEntity | null | undefined, unit_owner: CDOTA_BaseNPC | null | undefined,
                                   team_number: DOTATeam_t): CDOTA_BaseNPC;
 /**
  * Creates a DOTA unit by its dota_npc_units.txt name
@@ -147,6 +147,13 @@ declare function CreateUnitFromTable(arg1: table, arg2: Vector): CDOTA_BaseNPC;
  * (vector,vector) cross product between two vectors
  */
 declare function CrossVectors(arg1: Vector, arg2: Vector): Vector;
+/**
+ * Spawn a .vmap at the target location.  
+ * In addon_game_mode.lua, you can precache resource on `function SpawnGroupPrecache( hSpawnGroup, context )`.
+ * @param map NOTE: Don't include `maps/` in path
+ * @param b Unknow the meaning of this parameter
+ */
+declare function DOTA_SpawnMapAtPosition<T>(map: string, origin: Vector, b: boolean, readyCallback: (this:T, groupId: number) => void, completeCallback: (this:T, groupId: number) => void, context: T ): number;
 /**
  * Breaks in the debugger
  */
@@ -203,7 +210,7 @@ declare function DestroyDamageInfo(arg1: table): void;
 /**
  * (hAttacker, hTarget, hAbility, fDamage, fRadius, effectName)
  */
-declare function DoCleaveAttack(attacker: CDOTA_BaseNPC, target: CDOTA_BaseNPC, ability: CDOTABaseAbility, damage: number, startRadius: number, endRadius: number, distance: number,
+declare function DoCleaveAttack(attacker: CDOTA_BaseNPC, target: CDOTA_BaseNPC, ability: CDOTABaseAbility | null | undefined, damage: number, startRadius: number, endRadius: number, distance: number,
                                 effectName: string): number;
 /**
  * #EntFire:Generate and entity i/o event
@@ -228,6 +235,10 @@ declare function DoScriptAssert(arg1: boolean, arg2: string): void;
 declare function DoUniqueString(seed: string): string;
 declare function DotProduct(arg1: Vector, arg2: Vector): number;
 /**
+ * Drop a neutral item for the team of the hero at the given tier.
+ */
+declare function DropNeutralItemAtPositionForHero(itemName: string, origin: Vector, owner: CDOTA_BaseNPC, team: DOTATeam_t, b: boolean): CDOTA_Item_Physical;
+/**
  * Emit an announcer sound for all players.
  */
 declare function EmitAnnouncerSound(arg1: string): void;
@@ -250,15 +261,23 @@ declare function EmitGlobalSound(arg1: string): void;
 /**
  * Play named sound on Entity
  */
-declare function EmitSoundOn(soundname: string, ntity: CBaseEntity): void;
+declare function EmitSoundOn(soundname: string, entity: CBaseEntity): void;
 /**
  * Play named sound only on the client for the passed in player
  */
-declare function EmitSoundOnClient(arg1: string, arg2: CDOTAPlayer): void;
+declare function EmitSoundOnClient(soundname: string, player: CDOTAPlayer): void;
+/**
+ * Emit a sound on an entity for only a specific player
+ */
+declare function EmitSoundOnEntityForPlayer(soundname: string, entitiy: CBaseEntity, playerId: PlayerID): void;
 /**
  * Emit a sound on a location from a unit, only for players allied with that unit (vLocation, soundName, hCaster
  */
 declare function EmitSoundOnLocationForAllies(arg1: Vector, arg2: string, arg3: CDOTAPlayer): void;
+/**
+ * Emit a sound on a location for only a specific player
+ */
+declare function EmitSoundOnLocationForPlayer(soundname: string, origin: Vector, playerId: PlayerID): void;
 /**
  * Emit a sound on a location from a unit. (vLocation, soundName, hCaster).
  */
@@ -266,7 +285,7 @@ declare function EmitSoundOnLocationWithCaster(arg1: Vector, arg2: string, arg3:
 /**
  * Turn an entity index integer to an HScript representing that entity's script instance.
  */
-declare function EntIndexToHScript(entIndex: number): CBaseEntity;
+declare function EntIndexToHScript<T = CBaseEntity>(entIndex: number): T | undefined;
 
 interface OrderTable {
     UnitIndex: EntityID;
@@ -295,12 +314,12 @@ declare function FindClearSpaceForUnit(unit: CDOTA_BaseNPC, location: Vector, un
 /**
  * Find units that intersect the given line with the given flags.
  */
-declare function FindUnitsInLine(team: DOTATeam_t, startPos: Vector, endPos: Vector, cacheUnit: CBaseEntity|null, width: number, teamFilter: DOTA_UNIT_TARGET_TEAM, typeFilter: DOTA_UNIT_TARGET_TYPE,
+declare function FindUnitsInLine(team: DOTATeam_t, startPos: Vector, endPos: Vector, cacheUnit: CBaseEntity | null | undefined, width: number, teamFilter: DOTA_UNIT_TARGET_TEAM, typeFilter: DOTA_UNIT_TARGET_TYPE,
                                  flagFilter: DOTA_UNIT_TARGET_FLAGS): CDOTA_BaseNPC[];
 /**
  * Finds the units in a given radius with the given flags.
  */
-declare function FindUnitsInRadius(team: DOTATeam_t, location: Vector, cacheUnit: CBaseEntity|null, radius: number, teamFilter: DOTA_UNIT_TARGET_TEAM, typeFilter: DOTA_UNIT_TARGET_TYPE,
+declare function FindUnitsInRadius(team: DOTATeam_t, location: Vector, cacheUnit: CBaseEntity | null | undefined, radius: number, teamFilter: DOTA_UNIT_TARGET_TEAM, typeFilter: DOTA_UNIT_TARGET_TYPE,
                                    flagFilter: DOTA_UNIT_TARGET_FLAGS, order: FindType_t, canGrowCache: boolean): CDOTA_BaseNPC[];
 /**
  * Fire Entity's Action Input w/no data
@@ -326,6 +345,10 @@ declare function FireGameEventLocal(eventName: string, eventData: table): void;
  * Get the time spent on the server in the last frame
  */
 declare function FrameTime(): number;
+/**
+ * Gets the ability texture name for an ability
+ */
+declare function GetAbilityTextureNameForAbility(name: string): string;
 /**
  * Returns the currently active spawn group handle.
  */
@@ -453,6 +476,10 @@ declare function IsMarkedForDeletion(arg1: CBaseEntity): boolean;
  * Returns true if this is lua running from the server.dll.
  */
 declare function IsServer(): boolean;
+/**
+ * Returns true if the unit is in a valid position in the gridnav.
+ */
+declare function IsUnitInValidPosition(unit: CDOTA_BaseNPC): boolean;
 /**
  * Checks to see if the given hScript is a valid entity
  */
@@ -616,7 +643,7 @@ declare function ScreenShake(center: Vector, amplitude: number, frequency: numbe
 /**
  * ( DOTAPlayer sendToPlayer, int iMessageType, Entity targetEntity, int iValue, DOTAPlayer sourcePlayer ) - sendToPlayer and sourcePlayer can be nil - iMessageType is one of OVERHEAD_ALERT_*
  */
-declare function SendOverheadEventMessage(player: CDOTAPlayer, messageType: number, unit: CDOTA_BaseNPC, value: number, sourcePlayer: CDOTAPlayer): void;
+declare function SendOverheadEventMessage(player: CDOTAPlayer | null | undefined, messageType: OverheadAlerts_t, unit: CDOTA_BaseNPC, value: number, sourcePlayer: CDOTAPlayer | null | undefined): void;
 /**
  * Send a string to the console as a client command
  */
@@ -809,7 +836,7 @@ declare function UnloadSpawnGroup(arg1: string): void;
 /**
  * Unload a spawn group by handle
  */
-declare function UnloadSpawnGroupByHandle(arg1: number): void;
+declare function UnloadSpawnGroupByHandle(groupId: number): void;
 declare function VectorAngles(arg1: Vector): QAngle;
 /**
  * Get Qangles (with no roll) for a Vector.
