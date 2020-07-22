@@ -1,10 +1,10 @@
 type Quaternion = any;
-type EntityID = number & { _entityIdBrand: any };
-type ProjectileID = number & { _projectileIdBrand: any };
-type ParticleID = number & { _particleIdBrand: any };
-type EventListenerID = number & { _eventListenerBrand: any };
-type CCustomGameEventListener = number & { _customGameEventListenerBrand: any };
-type RealTimeCombatAnalyzerQuery = number & { _realTimeCombatAnalyzerQueryBrand: any };
+type EntityID = number & { _entityIdBrand: any; };
+type ProjectileID = number & { _projectileIdBrand: any; };
+type ParticleID = number & { _particleIdBrand: any; };
+type EventListenerID = number & { _eventListenerBrand: any; };
+type CCustomGameEventListener = number & { _customGameEventListenerBrand: any; };
+type RealTimeCombatAnalyzerQuery = number & { _realTimeCombatAnalyzerQueryBrand: any; };
 
 interface table {
     [key: string]: any;
@@ -66,7 +66,7 @@ declare abstract class CBaseAnimating extends CBaseModelEntity {
     /**
      * Set the cycle of the animation.
      */
-    SetCycle( flCycle: number ): void;
+    SetCycle(flCycle: number): void;
     /**
      * Sets a bodygroup.
      */
@@ -666,7 +666,7 @@ declare abstract class CBodyComponent {
     SetMaterialGroup(arg1: string): void;
     SetVelocity(arg1: Vector): void;
 }
-type CustomGameEventHandler<TEvent> = (this: void, userID: number, event: TEvent & { PlayerID: PlayerID }) => void;
+type CustomGameEventHandler<TEvent> = (this: void, userID: number, event: TEvent & { PlayerID: PlayerID; }) => void;
 /**
  * Custom game event manager
  */
@@ -1077,7 +1077,7 @@ declare abstract class CDOTABaseAbility extends CBaseEntity {
     SetFrozenCooldown(bFrozenCooldown: boolean): void;
     /**
      * Set whether this ability is hidden from the HUD
-     */    
+     */
     SetHidden(bHidden: boolean): void;
     /**
      * Set the ability to be in ability phase.
@@ -1161,7 +1161,7 @@ interface ExecuteOrderEvent {
     entindex_ability: EntityID;
     sequence_number_const: number;
     queue: boolean;
-    units: {[index: string]: EntityID};
+    units: { [index: string]: EntityID; };
     entindex_target: EntityID;
     position_x: number;
     position_y: number;
@@ -1224,6 +1224,11 @@ interface TrackingProjectileEvent {
  * Base game mode class
  */
 declare abstract class CDOTABaseGameMode extends CBaseEntity {
+    SetTPScrollSlotItemOverride(itemName: string): void;
+    SetNeutralStashTeamViewOnlyEnabled(enabled: boolean): void;
+    SetNeutralItemHideUndiscoveredEnabled(enabled: boolean): void;
+    DisableClumpingBehaviorByDefault(disabled: boolean): void;
+    SetRandomHeroBonusItemGrantDisabled(disabled: boolean): void;
     /**
      * [7.23] Begin tracking a sequence of events using the real time combat analyzer.
      */
@@ -2749,7 +2754,7 @@ declare abstract class CDOTA_BaseNPC extends CBaseFlex {
     /**
      * Gets the current vision range.
      */
-    GetCurrentVisionRange(): number;    
+    GetCurrentVisionRange(): number;
     GetCursorCastTarget(): CDOTA_BaseNPC;
     GetCursorPosition(): Vector;
     GetCursorTargetingNothing(): boolean;
@@ -3349,7 +3354,7 @@ declare abstract class CDOTA_BaseNPC extends CBaseFlex {
      * Performs an attack on a target.
      */
     PerformAttack(hTarget: CDOTA_BaseNPC, bUseCastAttackOrb: boolean, bProcessProcs: boolean, bSkipCooldown: boolean, bIgnoreInvis: boolean, bUseProjectile: boolean, bFakeAttack: boolean,
-                  bNeverMiss: boolean): void;
+        bNeverMiss: boolean): void;
     /**
      * Pick up a dropped item.
      */
@@ -3807,7 +3812,7 @@ interface CDOTA_BaseNPC_Hero extends CDOTA_BaseNPC {
     /**
      * Value is stored in PlayerResource.
      */
-    GetAssists(): number;    
+    GetAssists(): number;
     GetAttacker(nIndex: number): number;
     /**
      * Get the base agility of this hero.
@@ -4317,7 +4322,7 @@ declare abstract class CDOTA_Item extends CDOTABaseAbility {
      * Set the purchaser of record for this item.
      */
     SetPurchaser(hPurchaser: CDOTA_BaseNPC): void;
-    SetSecondaryCharges(nCharges: number): void
+    SetSecondaryCharges(nCharges: number): void;
     SetSellable(bSellable: boolean): void;
     SetShareability(iShareability: EShareAbility): void;
     SetStacksWithOtherOwners(bStacksWithOtherOwners: boolean): void;
